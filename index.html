@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conv Freq - Text/Audio/Color/Image Conversion</title>
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: var(--dark-color);
+            line-height: 1.6;
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            padding: 0;
+            position: relative;
+        }
+
+        header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.1);
+            transition: var(--transition);
+        }
+
+        .section:hover {
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        input[type="file"] {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px dashed #e9ecef;
+            border-radius: var(--border-radius);
+            background-color: #f8f9fa;
+            transition: var(--transition);
+        }
+
+        input[type="file"]:hover {
+            border-color: var(--accent-color);
+            background-color: #fff;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            outline: none;
+            margin: 10px 0;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--secondary-color);
+            transform: scale(1.1);
+        }
+
+        input[type="number"] {
+            width: 80px;
+            padding: 10px 10px;
+            margin: 10px 0;
+            text-align: center;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(72, 149, 239, 0.2);
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+
+        .btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-danger {
+            background-color: var(--warning-color);
+        }
+
+        .btn-danger:hover {
+            background-color: #d31666;
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+        }
+
+        .btn-success:hover {
+            background-color: #3ab7d8;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: var(--warning-color);
+            margin: 10px 0;
+            padding: 10px 15px;
+            background-color: rgba(247, 37, 133, 0.1);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--warning-color);
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            margin: 20px 0;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 1px solid #e9ecef;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .param-control {
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .main-content .param-control {
+            display: none;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .mic-status {
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background-color: rgba(0,0,0,0.05);
+        }
+
+        .mic-active {
+            color: #28a745;
+            background-color: rgba(40, 167, 69, 0.1);
+        }
+
+        .mic-inactive {
+            color: #dc3545;
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        .mic-detecting {
+            color: #ffc107;
+            background-color: rgba(255, 193, 7, 0.1);
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .divider {
+            text-align: center;
+            margin: 15px 0;
+            position: relative;
+            color: #6c757d;
+        }
+
+        .divider::before {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+
+        .divider span {
+            position: relative;
+            z-index: 2;
+            background-color: white;
+            padding: 0 15px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .progress-container {
+            width: 100%;
+            margin: 15px 0;
+            border-radius: 10px;
+            background-color: #e9ecef;
+            height: 10px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            width: 0%;
+            transition: width 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.3),
+                transparent
+            );
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 0.8rem;
+            color: var(--dark-color);
+        }
+
+        .settings-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: white;
+            transition: var(--transition);
+        }
+
+        .settings-btn:hover {
+            transform: rotate(30deg);
+        }
+
+        .settings-panel {
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            width: 300px;
+            z-index: 100;
+            display: none;
+        }
+
+        .settings-panel h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+
+        .settings-group {
+            padding: 25px;
+        }
+
+        .settings-group:not(:last-of-type) {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .settings-group h4 {
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+
+        .range-control {
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .range-control input[type="range"] {
+            flex-grow: 1;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            margin-left: 10px;
+            vertical-align: middle;
+            display: none;
+        }
+
+        .format-select {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .format-option {
+            flex: 1;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .format-option input[type="radio"] {
+            display: none;
+        }
+
+        .format-option label {
+            display: block;
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .format-option input[type="radio"]:checked + label {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .format-option label:hover {
+            border-color: var(--accent-color);
+        }
+
+        #fftSize {
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .color-display {
+            width: 100%;
+            height: 100px;
+            border-radius: var(--border-radius);
+            margin: 15px 0;
+            border: 1px solid #e9ecef;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        .color-controls {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .color-value {
+            font-family: monospace;
+            padding: 5px 10px;
+            background-color: rgba(0,0,0,0.05);
+            border-radius: var(--border-radius);
+        }
+
+        /* Frequency Visualizer Styles */
+        #frequencyCanvas {
+            width: 100%;
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            border: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin: 15px 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Visualizer Modes */
+        .visualizer-modes {
+            display: none;
+            gap: 10px;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+
+        .visualizer-mode {
+            display: block;
+            color: var(--dark-color);
+            padding: 8px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .visualizer-mode:hover {
+            border-color: var(--accent-color);
+        }
+
+        .visualizer-mode.active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Advanced Settings */
+        .advanced-settings {
+            margin-top: 15px;
+            padding-top: 15px;
+        }
+
+        /* Image Size Controls */
+        .image-size-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .image-size-control label {
+            min-width: 120px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0;
+            }
+            
+            .main-content {
+                padding: 20px;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+
+            .settings-panel {
+                width: calc(100% - 40px);
+                right: 20px;
+                left: 20px;
+            }
+
+            input[type=number]::-webkit-inner-spin-button,
+            input[type=number]::-webkit-outer-spin-button {
+                appearance: none;
+                -webkit-appearance: none;
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Conv Freq</h1>
+            <p class="tagline">Advanced Text/Audio/Color/Image Conversion Tool</p>
+            <button class="settings-btn" id="settingsBtn">⚙️</button>
+            <div class="settings-panel" id="settingsPanel">
+                <h3>Application Settings</h3>
+                
+                <div class="settings-group">
+                    <h4>Security</h4>
+                    <div class="param-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="useSecretKey">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Use Secret Key</span>
+                    </div>
+                    <div class="param-control" id="secretKeyContainer">
+                        <label>Secret Key:</label>
+                        <div class="range-control">
+                            <input type="range" id="secretKey" min="0" max="9999" value="0">
+                            <input type="number" id="secretKeyValue" value="0" min="0" max="9999">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Audio Format</h4>
+                    <div class="format-select">
+                        <div class="format-option">
+                            <input type="radio" id="formatWav" name="audioFormat" value="wav" checked>
+                            <label for="formatWav">WAV</label>
+                        </div>
+                        <div class="format-option">
+                            <input type="radio" id="formatMp3" name="audioFormat" value="mp3">
+                            <label for="formatMp3">MP3</label>
+                        </div>
+                        <div class="format-option">
+                            <input type="radio" id="formatAac" name="audioFormat" value="aac">
+                            <label for="formatAac">AAC</label>
+                        </div>
+                        <div class="format-option">
+                            <input type="radio" id="formatOpus" name="audioFormat" value="opus">
+                            <label for="formatOpus">OPUS</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Text to Audio</h4>
+                    <div class="range-control">
+                        <label>Tone duration (ms):</label>
+                        <input type="range" id="globalToneDuration" min="100" max="999" value="250">
+                        <input type="number" id="globalToneDurationValue" value="250" min="100" max="999">
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Image Processing</h4>
+                    <div class="range-control">
+                        <label>Image Width:</label>
+                        <input type="range" id="imageWidth" min="16" max="256" value="32">
+                        <input type="number" id="imageWidthValue" value="32" min="16" max="256">
+                    </div>
+                    <div class="range-control">
+                        <label>Image Height:</label>
+                        <input type="range" id="imageHeight" min="16" max="256" value="32">
+                        <input type="number" id="imageHeightValue" value="32" min="16" max="256">
+                    </div>
+                    <div class="range-control">
+                        <label>Tone duration (ms):</label>
+                        <input type="range" id="globalImageToneDuration" min="10" max="100" value="50">
+                        <input type="number" id="globalImageToneDurationValue" value="50" min="10" max="100">
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Visualizer</h4>
+                    <div class="param-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="showVisualizer">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Show Frequency Visualizer</span>
+                    </div>
+                    <div class="visualizer-modes">
+                        <div class="visualizer-mode active" data-mode="bars">BARS</div>
+                        <div class="visualizer-mode" data-mode="wave">WAVE</div>
+                        <div class="visualizer-mode" data-mode="circle">CIRCLE</div>
+                    </div>
+                    <div class="range-control">
+                        <label>Visualizer Sensitivity:</label>
+                        <input type="range" id="visualizerSensitivity" min="1" max="10" value="5">
+                        <input type="number" id="visualizerSensitivityValue" value="5" min="1" max="10">
+                    </div>
+                </div>
+                
+                <div class="settings-group advanced-settings">
+                    <h4>Advanced</h4>
+                    <div class="range-control">
+                        <label>FFT Size:</label>
+                        <select id="fftSize">
+                            <option value="256">256</option>
+                            <option value="512" selected>512</option>
+                            <option value="1024">1024</option>
+                            <option value="2048">2048</option>
+                        </select>
+                    </div>
+                    <div class="param-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="smoothing">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label">Enable Smoothing</span>
+                    </div>
+                </div>
+                
+                <div class="settings-group">
+                    <h4>Microphone</h4>
+                    <div class="range-control">
+                        <label>Silence timeout (s):</label>
+                        <input type="range" id="micSilenceTimeout" min="1" max="30" value="5">
+                        <input type="number" id="micSilenceTimeoutValue" value="5" min="1" max="30">
+                    </div>
+                    <div class="range-control">
+                        <label>Volume threshold:</label>
+                        <input type="range" id="micVolumeThreshold" min="0" max="100" value="30">
+                        <input type="number" id="micVolumeThresholdValue" value="30" min="0" max="100">
+                    </div>
+                    <div class="range-control">
+                        <label>Frequency tolerance:</label>
+                        <input type="range" id="freqTolerance" min="1" max="100" value="20">
+                        <input type="number" id="freqToleranceValue" value="20" min="1" max="100">
+                    </div>
+                </div>
+                
+                <button class="btn" id="saveSettings">Save Settings</button>
+            </div>
+        </header>
+        
+        <div class="main-content">
+            <!-- Text to Audio Section -->
+            <div class="section">
+                <h2>Text to Audio</h2>
+                <textarea id="textInput" rows="4" placeholder="Enter text here (English, Arabic, numbers) ..."></textarea>
+                <div class="param-control">
+                    <label>Tone duration per character (ms):</label>
+                    <input type="number" id="toneDuration" value="250" min="100" max="1000">
+                </div>
+                <button id="generateAudio" class="btn">Generate Audio</button>
+                <div class="progress-container" id="textToAudioProgress">
+                    <div class="progress-bar" id="textToAudioBar"></div>
+                    <div class="progress-text" id="textToAudioText">Processing...</div>
+                </div>
+                <div id="audioError" class="error hidden"></div>
+                <audio id="audioPlayer" class="audio-player" controls></audio>
+                <button id="downloadAudio" class="btn btn-success hidden">Download Audio</button>
+            </div>
+            
+            <!-- Audio to Text Section -->
+            <div class="section">
+                <h2>Audio to Text</h2>
+                <div class="flex-row">
+                    <button id="startMicToText" class="btn btn-success">Start Microphone</button>
+                    <button id="stopMicToText" class="btn btn-danger hidden">Stop Microphone</button>
+                    <span id="micStatusText" class="mic-status mic-inactive">Microphone Inactive</span>
+                    <span id="micDetectText" class="mic-status hidden">Detecting Frequencies</span>
+                </div>
+                <div class="divider"><span>OR</span></div>
+                <input type="file" id="audioUpload" accept=".wav,.mp3,.aac,.ogg,.opus">
+                <button id="decodeAudio" class="btn">Decode Audio</button>
+                <div class="progress-container" id="audioToTextProgress">
+                    <div class="progress-bar" id="audioToTextBar"></div>
+                    <div class="progress-text" id="audioToTextText">Processing...</div>
+                </div>
+                <div id="decodeError" class="error hidden"></div>
+                <textarea id="textOutput" rows="4" placeholder="Decoded text will appear here..." readonly></textarea>
+                <canvas id="frequencyCanvas" width="600" height="200"></canvas>
+            </div>
+            
+            <!-- Color to Audio Section -->
+            <div class="section">
+                <h2>Color to Audio</h2>
+                <div class="color-display" id="colorDisplay">Select a color</div>
+                <div class="color-controls">
+                    <input type="color" id="colorPicker" value="#4361ee">
+                    <span class="color-value" id="colorValue">#4361ee</span>
+                </div>
+                <button id="generateColorAudio" class="btn">Generate Audio</button>
+                <div class="progress-container" id="colorToAudioProgress">
+                    <div class="progress-bar" id="colorToAudioBar"></div>
+                    <div class="progress-text" id="colorToAudioText">Processing...</div>
+                </div>
+                <div id="colorAudioError" class="error hidden"></div>
+                <audio id="colorAudioPlayer" class="audio-player" controls></audio>
+                <button id="downloadColorAudio" class="btn btn-success hidden">Download Audio</button>
+            </div>
+            
+            <!-- Audio to Color Section -->
+            <div class="section">
+                <h2>Audio to Color</h2>
+                <div class="flex-row">
+                    <button id="startMicToColor" class="btn btn-success">Start Microphone</button>
+                    <button id="stopMicToColor" class="btn btn-danger hidden">Stop Microphone</button>
+                    <span id="micStatusColor" class="mic-status mic-inactive">Microphone Inactive</span>
+                    <span id="micDetectColor" class="mic-status hidden">Detecting Frequencies</span>
+                </div>
+                <div class="divider"><span>OR</span></div>
+                <input type="file" id="audioColorUpload" accept=".wav,.mp3,.aac,.ogg,.opus">
+                <button id="decodeAudioToColor" class="btn">Decode to Color</button>
+                <div class="progress-container" id="audioToColorProgress">
+                    <div class="progress-bar" id="audioToColorBar"></div>
+                    <div class="progress-text" id="audioToColorText">Processing...</div>
+                </div>
+                <div id="audioColorError" class="error hidden"></div>
+                <div class="color-display" id="decodedColorDisplay">Decoded color will appear here</div>
+            </div>
+            
+            <!-- Image to Audio Section -->
+            <div class="section">
+                <h2>Image to Audio</h2>
+                <input type="file" id="imageUpload" accept="image/*">
+                <div class="param-control">
+                    <label>Tone duration per byte (ms):</label>
+                    <input type="number" id="imageToneDuration" value="50" min="10" max="100">
+                </div>
+                <button id="generateImageAudio" class="btn">Generate Audio</button>
+                <div class="progress-container" id="imageToAudioProgress">
+                    <div class="progress-bar" id="imageToAudioBar"></div>
+                    <div class="progress-text" id="imageToAudioText">Processing...</div>
+                </div>
+                <div id="imageAudioError" class="error hidden"></div>
+                <img id="imagePreview" class="image-preview hidden">
+                <audio id="imageAudioPlayer" class="audio-player" controls></audio>
+                <button id="downloadImageAudio" class="btn btn-success hidden">Download Audio</button>
+            </div>
+            
+            <!-- Audio to Image Section -->
+            <div class="section">
+                <h2>Audio to Image</h2>
+                <div class="flex-row">
+                    <button id="startMicToImage" class="btn btn-success">Start Microphone</button>
+                    <button id="stopMicToImage" class="btn btn-danger hidden">Stop Microphone</button>
+                    <span id="micStatusImage" class="mic-status mic-inactive">Microphone Inactive</span>
+                    <span id="micDetectImage" class="mic-status hidden">Detecting Frequencies</span>
+                </div>
+                <div class="divider"><span>OR</span></div>
+                <input type="file" id="audioImageUpload" accept=".wav,.mp3,.aac,.ogg,.opus">
+                <div class="param-control">
+                    <label>Tone duration per byte (ms):</label>
+                    <input type="number" id="audioImageToneDuration" value="50" min="10" max="100">
+                </div>
+                <button id="decodeAudioToImage" class="btn">Decode to Image</button>
+                <div class="progress-container" id="audioToImageProgress">
+                    <div class="progress-bar" id="audioToImageBar"></div>
+                    <div class="progress-text" id="audioToImageText">Processing...</div>
+                </div>
+                <div id="audioImageError" class="error hidden"></div>
+                <img id="decodedImage" class="image-preview hidden">
+                <button id="downloadDecodedImage" class="btn btn-success hidden">Download Image</button>
+            </div>
+        </div>
+        
+        <footer>
+            Conv Freq &copy; 2025 - Developed by Fares Taha
+        </footer>
+    </div>
+
+    <script>
+        // ========== Global Settings ==========
+        // Character to frequency map (Hz)
+        const baseCharFreqMap = {
+            // English letters
+            'a': 440, 'b': 494, 'c': 523, 'd': 587, 'e': 659,
+            'f': 698, 'g': 784, 'h': 880, 'i': 988, 'j': 1046,
+            'k': 1175, 'l': 1319, 'm': 1397, 'n': 1568, 'o': 1760,
+            'p': 1976, 'q': 2093, 'r': 2349, 's': 2637, 't': 2794,
+            'u': 3136, 'v': 3520, 'w': 3951, 'x': 4186, 'y': 4698,
+            'z': 5274, ' ': 100,
+            
+            // Arabic letters
+            'ا': 550, 'ب': 600, 'ت': 650, 'ث': 700, 'ج': 750,
+            'ح': 800, 'خ': 850, 'د': 900, 'ذ': 950, 'ر': 1000,
+            'ز': 1050, 'س': 1100, 'ش': 1150, 'ص': 1200, 'ض': 1250,
+            'ط': 1300, 'ظ': 1350, 'ع': 1400, 'غ': 1450, 'ف': 1500,
+            'ق': 1550, 'ك': 1600, 'ل': 1650, 'م': 1700, 'ن': 1750,
+            'ه': 1800, 'و': 1850, 'ي': 1900,
+            
+            // Numbers (0-9)
+            '0': 2000, '1': 2100, '2': 2200, '3': 2300, '4': 2400,
+            '5': 2500, '6': 2600, '7': 2700, '8': 2800, '9': 2900
+        };
+
+        let charFreqMap = {...baseCharFreqMap};
+        let useSecretKey = false;
+        let secretKey = 0;
+        let audioFormat = 'wav'; // Default format
+
+        // Frequency to character map
+        const freqCharMap = {};
+        for (const [char, freq] of Object.entries(baseCharFreqMap)) {
+            freqCharMap[freq] = char;
+        }
+
+        // Microphone variables
+        let micStream = null;
+        let micProcessor = null;
+        let audioContext = null;
+        let micActiveForText = false;
+        let micActiveForColor = false;
+        let micActiveForImage = false;
+        let micBufferForImage = [];
+        let micSilenceTimer = null;
+        let micSilenceTimeout = 5000; // 5 seconds default
+        let lastDetectedFrequencyTime = 0;
+        let micVolumeThreshold = 0.3; // 0-1 range
+        let freqTolerance = 20; // Hz tolerance for frequency matching
+        let lastDetectedChar = null;
+        let lastCharTime = 0;
+        let charDebounceTime = 300; // ms to wait before accepting same character again
+
+        // Color variables
+        const colorFreqMap = {};
+        const freqColorMap = {};
+        let currentColor = '#4361ee';
+
+        // Image processing settings
+        let imageWidth = 32;
+        let imageHeight = 32;
+
+        // Frequency Visualizer variables
+        let canvas, ctx;
+        let animationId;
+        let frequencyData = [];
+        let showVisualizer = false;
+        let visualizerMode = 'bars'; // 'bars', 'wave', 'circle'
+        let visualizerSensitivity = 5;
+        let fftSize = 512;
+        let smoothingEnabled = true;
+
+        // ========== Initialize ==========
+        function initializeCharacterMaps() {
+            charFreqMap = {...baseCharFreqMap};
+            
+            if (useSecretKey && secretKey > 0) {
+                // Add secret key to all frequencies
+                for (const char in charFreqMap) {
+                    charFreqMap[char] += secretKey;
+                }
+            }
+            
+            // Update frequency to character map
+            for (const char in freqCharMap) {
+                delete freqCharMap[char];
+            }
+            
+            for (const [char, freq] of Object.entries(charFreqMap)) {
+                freqCharMap[freq] = char;
+            }
+        }
+
+        function initializeColorMaps() {
+            // Create a palette of 128 distinct colors (can be expanded to more)
+            const colors = [];
+            
+            // Generate colors with distinct hues
+            for (let h = 0; h < 360; h += 30) {
+                for (let s = 50; s <= 100; s += 25) {
+                    for (let l = 30; l <= 70; l += 20) {
+                        colors.push(`hsl(${h}, ${s}%, ${l}%)`);
+                        if (colors.length >= 128) break;
+                    }
+                    if (colors.length >= 128) break;
+                }
+                if (colors.length >= 128) break;
+            }
+            
+            // Assign frequencies to colors (200Hz to 5000Hz)
+            const minFreq = 200;
+            const maxFreq = 5000;
+            const freqStep = (maxFreq - minFreq) / colors.length;
+            
+            // Clear existing maps
+            for (const color in colorFreqMap) {
+                delete colorFreqMap[color];
+            }
+            for (const freq in freqColorMap) {
+                delete freqColorMap[freq];
+            }
+            
+            // Create new mappings
+            for (let i = 0; i < colors.length; i++) {
+                const freq = Math.round(minFreq + i * freqStep);
+                colorFreqMap[colors[i]] = freq;
+                freqColorMap[freq] = colors[i];
+            }
+        }
+
+        // ========== Frequency Visualizer ==========
+        function initFrequencyVisualizer() {
+            canvas = document.getElementById('frequencyCanvas');
+            ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            // Set canvas visibility based on settings
+            canvas.style.display = showVisualizer ? 'block' : 'none';
+            document.querySelector('.visualizer-modes').style.display = showVisualizer ? 'flex' : 'none';
+        }
+
+        function drawFrequencyBars(frequencies) {
+            if (!canvas || !showVisualizer) return;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Apply sensitivity
+            const sensitivityFactor = visualizerSensitivity / 5;
+            frequencies = frequencies.map(f => Math.min(255, f * sensitivityFactor));
+            
+            if (visualizerMode === 'bars') {
+                const barWidth = canvas.width / frequencies.length;
+                const colors = ['#4361ee', '#3f37c9', '#4895ef'];
+                
+                frequencies.forEach((freq, i) => {
+                    const height = (freq / 255) * canvas.height;
+                    const x = i * barWidth;
+                    const colorIndex = i % colors.length;
+                    
+                    ctx.fillStyle = colors[colorIndex];
+                    ctx.fillRect(x, canvas.height - height, barWidth - 1, height);
+                });
+            } 
+            else if (visualizerMode === 'wave') {
+                ctx.beginPath();
+                ctx.strokeStyle = '#4361ee';
+                ctx.lineWidth = 2;
+                
+                const step = canvas.width / (frequencies.length - 1);
+                
+                for (let i = 0; i < frequencies.length; i++) {
+                    const x = i * step;
+                    const y = canvas.height - (frequencies[i] / 255) * canvas.height;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.stroke();
+            }
+            else if (visualizerMode === 'circle') {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const maxRadius = Math.min(canvas.width, canvas.height) / 2 - 10;
+                
+                ctx.beginPath();
+                ctx.strokeStyle = '#4361ee';
+                ctx.lineWidth = 2;
+                
+                const angleStep = (Math.PI * 2) / frequencies.length;
+                
+                for (let i = 0; i < frequencies.length; i++) {
+                    const angle = i * angleStep;
+                    const radius = (frequencies[i] / 255) * maxRadius;
+                    const x = centerX + Math.cos(angle) * radius;
+                    const y = centerY + Math.sin(angle) * radius;
+                    
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                
+                ctx.closePath();
+                ctx.stroke();
+            }
+            
+            // Add grid lines
+            ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+            ctx.beginPath();
+            for (let y = 0; y <= canvas.height; y += 50) {
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+            }
+            ctx.stroke();
+        }
+
+        function updateVisualizer(analyserNode) {
+            if (!showVisualizer) return;
+            
+            const bufferLength = analyserNode.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+            
+            function draw() {
+                animationId = requestAnimationFrame(draw);
+                analyserNode.getByteFrequencyData(dataArray);
+                drawFrequencyBars(dataArray);
+            }
+            
+            draw();
+        }
+
+        function stopVisualizer() {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // ========== Settings Panel ==========
+        document.getElementById('settingsBtn').addEventListener('click', () => {
+            const panel = document.getElementById('settingsPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Range input sync with number input
+        document.getElementById('secretKey').addEventListener('input', (e) => {
+            document.getElementById('secretKeyValue').value = e.target.value;
+        });
+        document.getElementById('secretKeyValue').addEventListener('input', (e) => {
+            const value = Math.min(9999, Math.max(0, parseInt(e.target.value) || 0));
+            document.getElementById('secretKey').value = value;
+            document.getElementById('secretKeyValue').value = value;
+        });
+
+        document.getElementById('globalToneDuration').addEventListener('input', (e) => {
+            document.getElementById('globalToneDurationValue').value = e.target.value;
+        });
+        document.getElementById('globalToneDurationValue').addEventListener('input', (e) => {
+            const value = Math.min(999, Math.max(100, parseInt(e.target.value) || 250));
+            document.getElementById('globalToneDuration').value = value;
+            document.getElementById('globalToneDurationValue').value = value;
+        });
+
+        document.getElementById('imageWidth').addEventListener('input', (e) => {
+            document.getElementById('imageWidthValue').value = e.target.value;
+        });
+        document.getElementById('imageWidthValue').addEventListener('input', (e) => {
+            const value = Math.min(256, Math.max(16, parseInt(e.target.value) || 32));
+            document.getElementById('imageWidth').value = value;
+            document.getElementById('imageWidthValue').value = value;
+        });
+
+        document.getElementById('imageHeight').addEventListener('input', (e) => {
+            document.getElementById('imageHeightValue').value = e.target.value;
+        });
+        document.getElementById('imageHeightValue').addEventListener('input', (e) => {
+            const value = Math.min(256, Math.max(16, parseInt(e.target.value) || 32));
+            document.getElementById('imageHeight').value = value;
+            document.getElementById('imageHeightValue').value = value;
+        });
+
+        document.getElementById('globalImageToneDuration').addEventListener('input', (e) => {
+            document.getElementById('globalImageToneDurationValue').value = e.target.value;
+        });
+        document.getElementById('globalImageToneDurationValue').addEventListener('input', (e) => {
+            const value = Math.min(100, Math.max(10, parseInt(e.target.value) || 50));
+            document.getElementById('globalImageToneDuration').value = value;
+            document.getElementById('globalImageToneDurationValue').value = value;
+        });
+
+        document.getElementById('micSilenceTimeout').addEventListener('input', (e) => {
+            document.getElementById('micSilenceTimeoutValue').value = e.target.value;
+        });
+        document.getElementById('micSilenceTimeoutValue').addEventListener('input', (e) => {
+            const value = Math.min(30, Math.max(1, parseInt(e.target.value) || 5));
+            document.getElementById('micSilenceTimeout').value = value;
+            document.getElementById('micSilenceTimeoutValue').value = value;
+        });
+
+        document.getElementById('micVolumeThreshold').addEventListener('input', (e) => {
+            document.getElementById('micVolumeThresholdValue').value = e.target.value;
+        });
+        document.getElementById('micVolumeThresholdValue').addEventListener('input', (e) => {
+            const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 30));
+            document.getElementById('micVolumeThreshold').value = value;
+            document.getElementById('micVolumeThresholdValue').value = value;
+        });
+
+        document.getElementById('freqTolerance').addEventListener('input', (e) => {
+            document.getElementById('freqToleranceValue').value = e.target.value;
+        });
+        document.getElementById('freqToleranceValue').addEventListener('input', (e) => {
+            const value = Math.min(100, Math.max(1, parseInt(e.target.value) || 20));
+            document.getElementById('freqTolerance').value = value;
+            document.getElementById('freqToleranceValue').value = value;
+        });
+
+        document.getElementById('visualizerSensitivity').addEventListener('input', (e) => {
+            document.getElementById('visualizerSensitivityValue').value = e.target.value;
+        });
+        document.getElementById('visualizerSensitivityValue').addEventListener('input', (e) => {
+            const value = Math.min(10, Math.max(1, parseInt(e.target.value) || 5));
+            document.getElementById('visualizerSensitivity').value = value;
+            document.getElementById('visualizerSensitivityValue').value = value;
+        });
+
+        document.getElementById('useSecretKey').addEventListener('change', (e) => {
+            useSecretKey = e.target.checked;
+            document.getElementById('secretKeyContainer').style.display = useSecretKey ? 'flex' : 'none';
+        });
+
+        document.getElementById('showVisualizer').addEventListener('change', (e) => {
+            showVisualizer = e.target.checked;
+            canvas.style.display = showVisualizer ? 'block' : 'none';
+            document.querySelector('.visualizer-modes').style.display = showVisualizer ? 'flex' : 'none';
+        });
+
+        document.getElementById('smoothing').addEventListener('change', (e) => {
+            smoothingEnabled = e.target.checked;
+        });
+
+        document.getElementById('fftSize').addEventListener('change', (e) => {
+            fftSize = parseInt(e.target.value);
+        });
+
+        // Visualizer mode selection
+        document.querySelectorAll('.visualizer-mode').forEach(mode => {
+            mode.addEventListener('click', () => {
+                document.querySelectorAll('.visualizer-mode').forEach(m => m.classList.remove('active'));
+                mode.classList.add('active');
+                visualizerMode = mode.dataset.mode;
+            });
+        });
+
+        // Audio format selection
+        document.querySelectorAll('input[name="audioFormat"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                audioFormat = e.target.value;
+            });
+        });
+
+        document.getElementById('saveSettings').addEventListener('click', () => {
+            // Save all settings
+            const toneDuration = parseInt(document.getElementById('globalToneDuration').value);
+            document.getElementById('toneDuration').value = toneDuration;
+            
+            const imageToneDuration = parseInt(document.getElementById('globalImageToneDuration').value);
+            document.getElementById('imageToneDuration').value = imageToneDuration;
+            document.getElementById('audioImageToneDuration').value = imageToneDuration;
+            
+            imageWidth = parseInt(document.getElementById('imageWidth').value);
+            imageHeight = parseInt(document.getElementById('imageHeight').value);
+            
+            micSilenceTimeout = parseInt(document.getElementById('micSilenceTimeout').value) * 1000;
+            micVolumeThreshold = parseInt(document.getElementById('micVolumeThreshold').value) / 100;
+            freqTolerance = parseInt(document.getElementById('freqTolerance').value);
+            visualizerSensitivity = parseInt(document.getElementById('visualizerSensitivity').value);
+            
+            useSecretKey = document.getElementById('useSecretKey').checked;
+            secretKey = parseInt(document.getElementById('secretKey').value);
+            showVisualizer = document.getElementById('showVisualizer').checked;
+            smoothingEnabled = document.getElementById('smoothing').checked;
+            
+            // Get selected audio format
+            audioFormat = document.querySelector('input[name="audioFormat"]:checked').value;
+            
+            // Update canvas visibility
+            canvas.style.display = showVisualizer ? 'block' : 'none';
+            
+            // Reinitialize character maps with new settings
+            initializeCharacterMaps();
+            initializeColorMaps();
+            
+            document.getElementById('settingsPanel').style.display = 'none';
+        });
+
+        // Initialize settings panel
+        document.getElementById('secretKeyContainer').style.display = useSecretKey ? 'flex' : 'none';
+
+        // ========== Color Picker ==========
+        document.getElementById('colorPicker').addEventListener('input', (e) => {
+            currentColor = e.target.value;
+            document.getElementById('colorValue').textContent = currentColor;
+            document.getElementById('colorDisplay').style.backgroundColor = currentColor;
+            document.getElementById('colorDisplay').textContent = currentColor;
+        });
+
+        // ========== Text to Audio ==========
+        document.getElementById('generateAudio').addEventListener('click', async () => {
+            const text = document.getElementById('textInput').value.toLowerCase();
+            const toneDurationMs = parseInt(document.getElementById('toneDuration').value);
+            const errorElement = document.getElementById('audioError');
+            const progressContainer = document.getElementById('textToAudioProgress');
+            const progressBar = document.getElementById('textToAudioBar');
+            const progressText = document.getElementById('textToAudioText');
+            
+            errorElement.classList.add('hidden');
+            
+            if (!text) {
+                showError(errorElement, 'Please enter text first');
+                return;
+            }
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Initializing...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const sampleRate = audioContext.sampleRate;
+                const toneDuration = toneDurationMs / 1000;
+                const silenceDuration = 0.05;
+                const totalDuration = text.length * (toneDuration + silenceDuration);
+                
+                const buffer = audioContext.createBuffer(1, sampleRate * totalDuration, sampleRate);
+                const channelData = buffer.getChannelData(0);
+                
+                let currentTime = 0;
+                for (let i = 0; i < text.length; i++) {
+                    const char = text[i];
+                    const freq = charFreqMap[char] || charFreqMap[' '];
+                    const startSample = Math.floor(currentTime * sampleRate);
+                    const endSample = Math.floor((currentTime + toneDuration) * sampleRate);
+                    
+                    for (let j = startSample; j < endSample; j++) {
+                        const time = (j - startSample) / sampleRate;
+                        channelData[j] = Math.sin(2 * Math.PI * freq * time);
+                    }
+                    
+                    currentTime += toneDuration + silenceDuration;
+                    
+                    // Update progress
+                    const progress = Math.floor((i / text.length) * 100);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Processing: ${progress}%`;
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Generating audio file...';
+
+                let audioData, mimeType, fileExtension;
+                
+                if (audioFormat === 'wav') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/wav';
+                    fileExtension = 'wav';
+                } else if (audioFormat === 'mp3') {
+                    // Note: MP3 encoding would require a library like lamejs or server-side processing
+                    // This is a placeholder - in a real app you'd need to implement MP3 encoding
+                    audioData = await exportBufferToWav(buffer, sampleRate); // Fallback to WAV
+                    mimeType = 'audio/mp3';
+                    fileExtension = 'mp3';
+                    // showError(errorElement, 'MP3 encoding not implemented - using WAV instead');
+                } else if (audioFormat === 'aac') {
+                    // Note: AAC encoding would require a library or server-side processing
+                    // This is a placeholder - in a real app you'd need to implement AAC encoding
+                    audioData = await exportBufferToWav(buffer, sampleRate); // Fallback to WAV
+                    mimeType = 'audio/aac';
+                    fileExtension = 'aac';
+                    // showError(errorElement, 'AAC encoding not implemented - using WAV instead');
+                } else if (audioFormat === 'opus') {
+                    // Note: Opus encoding would require a library or server-side processing
+                    // This is a placeholder - in a real app you'd need to implement Opus encoding
+                    audioData = await exportBufferToWav(buffer, sampleRate); // Fallback to WAV
+                    mimeType = 'audio/ogg; codecs=opus';
+                    fileExtension = 'opus';
+                    // showError(errorElement, 'Opus encoding not implemented - using WAV instead');
+                }
+                
+                const audioUrl = URL.createObjectURL(new Blob([audioData], { type: mimeType }));
+                
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.classList.remove('hidden');
+                
+                const downloadBtn = document.getElementById('downloadAudio');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    downloadFile(audioUrl, `converted_message.${fileExtension}`);
+                };
+                
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error generating audio:', error);
+                showError(errorElement, 'Error generating audio: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Audio to Text ==========
+        document.getElementById('decodeAudio').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audioUpload');
+            const errorElement = document.getElementById('decodeError');
+            const progressContainer = document.getElementById('audioToTextProgress');
+            const progressBar = document.getElementById('audioToTextBar');
+            const progressText = document.getElementById('audioToTextText');
+            
+            errorElement.classList.add('hidden');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError(errorElement, 'Please select an audio file first');
+                return;
+            }
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Loading audio file...';
+
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                
+                progressBar.style.width = '30%';
+                progressText.textContent = 'Decoding audio...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                
+                // Setup visualizer if enabled
+                if (showVisualizer) {
+                    initFrequencyVisualizer();
+                    const source = audioContext.createBufferSource();
+                    source.buffer = audioBuffer;
+                    const analyser = audioContext.createAnalyser();
+                    analyser.fftSize = fftSize;
+                    analyser.smoothingTimeConstant = smoothingEnabled ? 0.8 : 0;
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    updateVisualizer(analyser);
+                    source.start();
+                }
+                
+                const decodedText = await decodeAudioBuffer(audioBuffer, progressBar, progressText);
+                
+                document.getElementById('textOutput').value = decodedText;
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error decoding audio:', error);
+                showError(errorElement, 'Error decoding audio: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Color to Audio ==========
+        document.getElementById('generateColorAudio').addEventListener('click', async () => {
+            const errorElement = document.getElementById('colorAudioError');
+            const progressContainer = document.getElementById('colorToAudioProgress');
+            const progressBar = document.getElementById('colorToAudioBar');
+            const progressText = document.getElementById('colorToAudioText');
+            
+            errorElement.classList.add('hidden');
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Initializing...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const sampleRate = audioContext.sampleRate;
+                const toneDuration = 0.5; // 500ms for color tones
+                const totalDuration = toneDuration * 3; // For R, G, B components
+                
+                const buffer = audioContext.createBuffer(1, sampleRate * totalDuration, sampleRate);
+                const channelData = buffer.getChannelData(0);
+                
+                // Parse the color (hex or rgb/hsl)
+                let r, g, b;
+                if (currentColor.startsWith('#')) {
+                    // Hex color
+                    r = parseInt(currentColor.substr(1, 2), 16);
+                    g = parseInt(currentColor.substr(3, 2), 16);
+                    b = parseInt(currentColor.substr(5, 2), 16);
+                } else if (currentColor.startsWith('rgb')) {
+                    // RGB color
+                    const parts = currentColor.match(/\d+/g);
+                    r = parseInt(parts[0]);
+                    g = parseInt(parts[1]);
+                    b = parseInt(parts[2]);
+                } else if (currentColor.startsWith('hsl')) {
+                    // HSL color - convert to RGB
+                    const parts = currentColor.match(/\d+/g);
+                    const hslToRgb = (h, s, l) => {
+                        h /= 360;
+                        s /= 100;
+                        l /= 100;
+                        let r, g, b;
+                        
+                        if (s === 0) {
+                            r = g = b = l;
+                        } else {
+                            const hue2rgb = (p, q, t) => {
+                                if (t < 0) t += 1;
+                                if (t > 1) t -= 1;
+                                if (t < 1/6) return p + (q - p) * 6 * t;
+                                if (t < 1/2) return q;
+                                if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+                                return p;
+                            };
+                            
+                            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                            const p = 2 * l - q;
+                            
+                            r = hue2rgb(p, q, h + 1/3);
+                            g = hue2rgb(p, q, h);
+                            b = hue2rgb(p, q, h - 1/3);
+                        }
+                        
+                        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+                    };
+                    
+                    [r, g, b] = hslToRgb(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+                }
+                
+                // Generate tones for R, G, B components
+                const componentFreqs = [
+                    200 + (r / 255) * 4800,  // Red component frequency (200-5000Hz)
+                    200 + (g / 255) * 4800,  // Green component frequency
+                    200 + (b / 255) * 4800   // Blue component frequency
+                ];
+                
+                // Apply secret key transformation if enabled
+                if (useSecretKey && secretKey > 0) {
+                    for (let i = 0; i < componentFreqs.length; i++) {
+                        componentFreqs[i] += secretKey;
+                    }
+                }
+                
+                let currentTime = 0;
+                for (let i = 0; i < componentFreqs.length; i++) {
+                    const freq = componentFreqs[i];
+                    const startSample = Math.floor(currentTime * sampleRate);
+                    const endSample = Math.floor((currentTime + toneDuration) * sampleRate);
+                    
+                    for (let j = startSample; j < endSample; j++) {
+                        const time = (j - startSample) / sampleRate;
+                        channelData[j] = Math.sin(2 * Math.PI * freq * time);
+                    }
+                    
+                    currentTime += toneDuration;
+                    
+                    // Update progress
+                    const progress = Math.floor(((i + 1) / componentFreqs.length) * 100);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Processing: ${progress}%`;
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Generating audio file...';
+
+                let audioData, mimeType, fileExtension;
+                
+                if (audioFormat === 'wav') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/wav';
+                    fileExtension = 'wav';
+                } else if (audioFormat === 'mp3') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/mp3';
+                    fileExtension = 'mp3';
+                } else if (audioFormat === 'aac') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/aac';
+                    fileExtension = 'aac';
+                } else if (audioFormat === 'opus') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/ogg; codecs=opus';
+                    fileExtension = 'opus';
+                }
+                
+                const audioUrl = URL.createObjectURL(new Blob([audioData], { type: mimeType }));
+                
+                const audioPlayer = document.getElementById('colorAudioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.classList.remove('hidden');
+                
+                const downloadBtn = document.getElementById('downloadColorAudio');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    downloadFile(audioUrl, `color_audio.${fileExtension}`);
+                };
+                
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error generating color audio:', error);
+                showError(errorElement, 'Error generating audio from color: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Audio to Color ==========
+        document.getElementById('decodeAudioToColor').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audioColorUpload');
+            const errorElement = document.getElementById('audioColorError');
+            const progressContainer = document.getElementById('audioToColorProgress');
+            const progressBar = document.getElementById('audioToColorBar');
+            const progressText = document.getElementById('audioToColorText');
+            
+            errorElement.classList.add('hidden');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError(errorElement, 'Please select an audio file first');
+                return;
+            }
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Loading audio file...';
+
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                
+                progressBar.style.width = '30%';
+                progressText.textContent = 'Decoding audio...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                const audioData = audioBuffer.getChannelData(0);
+                const sampleRate = audioBuffer.sampleRate;
+                
+                progressBar.style.width = '50%';
+                progressText.textContent = 'Processing data...';
+
+                // We expect 3 tones (R, G, B) of 0.5s each
+                const toneDuration = 0.5;
+                const chunkSize = Math.floor(sampleRate * toneDuration);
+                const nChunks = Math.min(3, Math.floor(audioData.length / chunkSize));
+                const componentValues = [];
+                
+                for (let i = 0; i < nChunks; i++) {
+                    const start = i * chunkSize;
+                    const end = start + chunkSize;
+                    const chunk = audioData.slice(start, end);
+                    
+                    const freq = getDominantFrequency(chunk, sampleRate);
+                    let componentValue;
+                    
+                    // Apply secret key reverse transformation if enabled
+                    if (useSecretKey && secretKey > 0) {
+                        componentValue = Math.round(((freq - secretKey - 200) / 4800) * 255);
+                    } else {
+                        componentValue = Math.round(((freq - 200) / 4800) * 255);
+                    }
+                    
+                    componentValue = Math.max(0, Math.min(255, componentValue));
+                    componentValues.push(componentValue);
+                    
+                    // Update progress
+                    const progress = Math.floor(((i + 1) / nChunks) * 40) + 50;
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Processing: ${progress}%`;
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+                
+                progressBar.style.width = '90%';
+                progressText.textContent = 'Generating color...';
+
+                // Create color from components
+                let color;
+                if (componentValues.length === 3) {
+                    // RGB color
+                    color = `rgb(${componentValues[0]}, ${componentValues[1]}, ${componentValues[2]})`;
+                } else if (componentValues.length === 1) {
+                    // Grayscale
+                    color = `rgb(${componentValues[0]}, ${componentValues[0]}, ${componentValues[0]})`;
+                } else {
+                    throw new Error('Could not decode enough color components');
+                }
+                
+                const decodedColorDisplay = document.getElementById('decodedColorDisplay');
+                decodedColorDisplay.style.backgroundColor = color;
+                decodedColorDisplay.textContent = color;
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error decoding audio to color:', error);
+                showError(errorElement, 'Error decoding audio to color: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Image to Audio ==========
+        document.getElementById('generateImageAudio').addEventListener('click', async () => {
+            const fileInput = document.getElementById('imageUpload');
+            const toneDurationMs = parseInt(document.getElementById('imageToneDuration').value);
+            const errorElement = document.getElementById('imageAudioError');
+            const progressContainer = document.getElementById('imageToAudioProgress');
+            const progressBar = document.getElementById('imageToAudioBar');
+            const progressText = document.getElementById('imageToAudioText');
+            
+            errorElement.classList.add('hidden');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError(errorElement, 'Please select an image file first');
+                return;
+            }
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Loading image...';
+
+                const file = fileInput.files[0];
+                const imageUrl = URL.createObjectURL(file);
+                const imagePreview = document.getElementById('imagePreview');
+                imagePreview.src = imageUrl;
+                imagePreview.classList.remove('hidden');
+                
+                progressBar.style.width = '20%';
+                progressText.textContent = 'Processing image...';
+
+                // Convert image to bytes
+                const img = await loadImage(imageUrl);
+                const imageBytes = await getImageBytes(img);
+                
+                progressBar.style.width = '40%';
+                progressText.textContent = 'Generating audio...';
+
+                // Create audio from bytes with secret key
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const sampleRate = audioContext.sampleRate;
+                const toneDuration = toneDurationMs / 1000;
+                const totalDuration = imageBytes.length * toneDuration;
+                
+                const buffer = audioContext.createBuffer(1, sampleRate * totalDuration, sampleRate);
+                const channelData = buffer.getChannelData(0);
+                
+                const chunkSize = Math.floor(imageBytes.length / 10);
+                for (let i = 0; i < imageBytes.length; i++) {
+                    let byte = imageBytes[i];
+                    // Apply secret key transformation if enabled
+                    if (useSecretKey && secretKey > 0) {
+                        byte = (byte + secretKey) % 256;
+                    }
+                    const freq = 200 + byte * 20; // Frequency between 200-5500 Hz
+                    const startSample = Math.floor(i * toneDuration * sampleRate);
+                    const endSample = Math.floor((i + 1) * toneDuration * sampleRate);
+                    
+                    for (let j = startSample; j < endSample; j++) {
+                        const time = (j - startSample) / sampleRate;
+                        channelData[j] = Math.sin(2 * Math.PI * freq * time);
+                    }
+                    
+                    // Update progress
+                    if (i % chunkSize === 0) {
+                        const progress = Math.floor((i / imageBytes.length) * 60) + 40;
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `Generating: ${progress}%`;
+                        await new Promise(resolve => setTimeout(resolve, 0));
+                    }
+                }
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Finalizing audio...';
+
+                let audioData, mimeType, fileExtension;
+                
+                if (audioFormat === 'wav') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/wav';
+                    fileExtension = 'wav';
+                } else if (audioFormat === 'mp3') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/mp3';
+                    fileExtension = 'mp3';
+                } else if (audioFormat === 'aac') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/aac';
+                    fileExtension = 'aac';
+                } else if (audioFormat === 'opus') {
+                    audioData = await exportBufferToWav(buffer, sampleRate);
+                    mimeType = 'audio/ogg; codecs=opus';
+                    fileExtension = 'opus';
+                }
+                
+                const audioUrl = URL.createObjectURL(new Blob([audioData], { type: mimeType }));
+                
+                const audioPlayer = document.getElementById('imageAudioPlayer');
+                audioPlayer.src = audioUrl;
+                audioPlayer.classList.remove('hidden');
+                
+                const downloadBtn = document.getElementById('downloadImageAudio');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    downloadFile(audioUrl, `image_audio.${fileExtension}`);
+                };
+                
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error generating image audio:', error);
+                showError(errorElement, 'Error generating audio from image: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Audio to Image ==========
+        document.getElementById('decodeAudioToImage').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audioImageUpload');
+            const toneDurationMs = parseInt(document.getElementById('audioImageToneDuration').value);
+            const errorElement = document.getElementById('audioImageError');
+            const progressContainer = document.getElementById('audioToImageProgress');
+            const progressBar = document.getElementById('audioToImageBar');
+            const progressText = document.getElementById('audioToImageText');
+            
+            errorElement.classList.add('hidden');
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showError(errorElement, 'Please select an audio file first');
+                return;
+            }
+
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Loading audio file...';
+
+                const file = fileInput.files[0];
+                const arrayBuffer = await file.arrayBuffer();
+                
+                progressBar.style.width = '30%';
+                progressText.textContent = 'Decoding audio...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+                const audioData = audioBuffer.getChannelData(0);
+                const sampleRate = audioBuffer.sampleRate;
+                
+                progressBar.style.width = '50%';
+                progressText.textContent = 'Processing data...';
+
+                const toneDuration = toneDurationMs / 1000;
+                const chunkSize = Math.floor(sampleRate * toneDuration);
+                const nChunks = Math.floor(audioData.length / chunkSize);
+                const byteArray = [];
+                
+                for (let i = 0; i < nChunks; i++) {
+                    const start = i * chunkSize;
+                    const end = start + chunkSize;
+                    const chunk = audioData.slice(start, end);
+                    
+                    const freq = getDominantFrequency(chunk, sampleRate);
+                    let byte = Math.round((freq - 200) / 20);
+                    // Apply secret key reverse transformation if enabled
+                    if (useSecretKey && secretKey > 0) {
+                        byte = (byte - secretKey + 256) % 256;
+                    }
+                    byteArray.push(Math.max(0, Math.min(255, byte)));
+                    
+                    // Update progress
+                    if (i % 100 === 0) {
+                        const progress = Math.floor((i / nChunks) * 40) + 50;
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `Processing: ${progress}%`;
+                        await new Promise(resolve => setTimeout(resolve, 0));
+                    }
+                }
+                
+                progressBar.style.width = '90%';
+                progressText.textContent = 'Generating image...';
+
+                // Convert bytes to image
+                const byteData = new Uint8Array(byteArray);
+                const blob = new Blob([byteData], { type: 'image/png' });
+                const imageUrl = URL.createObjectURL(blob);
+                
+                const decodedImage = document.getElementById('decodedImage');
+                decodedImage.src = imageUrl;
+                decodedImage.classList.remove('hidden');
+                
+                const downloadBtn = document.getElementById('downloadDecodedImage');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    downloadFile(imageUrl, 'decoded_image.png');
+                };
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Error decoding audio to image:', error);
+                showError(errorElement, 'Error decoding audio to image: ' + error.message);
+                progressContainer.style.display = 'none';
+            }
+        });
+
+        // ========== Microphone Controls for Text ==========
+        document.getElementById('startMicToText').addEventListener('click', async () => {
+            try {
+                await startMicrophone('text');
+                document.getElementById('startMicToText').classList.add('hidden');
+                document.getElementById('stopMicToText').classList.remove('hidden');
+                document.getElementById('micStatusText').textContent = 'Microphone Active';
+                document.getElementById('micStatusText').classList.remove('mic-inactive');
+                document.getElementById('micStatusText').classList.add('mic-active');
+                document.getElementById('micDetectText').classList.add('hidden');
+                document.getElementById('textOutput').value = ''; // Clear previous text
+            } catch (error) {
+                console.error('Error starting microphone:', error);
+                showError(document.getElementById('decodeError'), 'Error starting microphone: ' + error.message);
+            }
+        });
+
+        document.getElementById('stopMicToText').addEventListener('click', () => {
+            stopMicrophone('text');
+            document.getElementById('startMicToText').classList.remove('hidden');
+            document.getElementById('stopMicToText').classList.add('hidden');
+            document.getElementById('micStatusText').textContent = 'Microphone Inactive';
+            document.getElementById('micStatusText').classList.remove('mic-active');
+            document.getElementById('micStatusText').classList.add('mic-inactive');
+            document.getElementById('micDetectText').classList.add('hidden');
+        });
+
+        // ========== Microphone Controls for Color ==========
+        document.getElementById('startMicToColor').addEventListener('click', async () => {
+            try {
+                await startMicrophone('color');
+                document.getElementById('startMicToColor').classList.add('hidden');
+                document.getElementById('stopMicToColor').classList.remove('hidden');
+                document.getElementById('micStatusColor').textContent = 'Microphone Active';
+                document.getElementById('micStatusColor').classList.remove('mic-inactive');
+                document.getElementById('micStatusColor').classList.add('mic-active');
+                document.getElementById('micDetectColor').classList.add('hidden');
+            } catch (error) {
+                console.error('Error starting microphone:', error);
+                showError(document.getElementById('audioColorError'), 'Error starting microphone: ' + error.message);
+            }
+        });
+
+        document.getElementById('stopMicToColor').addEventListener('click', () => {
+            stopMicrophone('color');
+            document.getElementById('startMicToColor').classList.remove('hidden');
+            document.getElementById('stopMicToColor').classList.add('hidden');
+            document.getElementById('micStatusColor').textContent = 'Microphone Inactive';
+            document.getElementById('micStatusColor').classList.remove('mic-active');
+            document.getElementById('micStatusColor').classList.add('mic-inactive');
+            document.getElementById('micDetectColor').classList.add('hidden');
+        });
+
+        // ========== Microphone Controls for Image ==========
+        document.getElementById('startMicToImage').addEventListener('click', async () => {
+            try {
+                await startMicrophone('image');
+                document.getElementById('startMicToImage').classList.add('hidden');
+                document.getElementById('stopMicToImage').classList.remove('hidden');
+                document.getElementById('micStatusImage').textContent = 'Microphone Active';
+                document.getElementById('micStatusImage').classList.remove('mic-inactive');
+                document.getElementById('micStatusImage').classList.add('mic-active');
+                document.getElementById('micDetectImage').classList.add('hidden');
+                micBufferForImage = []; // Clear previous buffer
+            } catch (error) {
+                console.error('Error starting microphone:', error);
+                showError(document.getElementById('audioImageError'), 'Error starting microphone: ' + error.message);
+            }
+        });
+
+        document.getElementById('stopMicToImage').addEventListener('click', async () => {
+            const progressContainer = document.getElementById('audioToImageProgress');
+            const progressBar = document.getElementById('audioToImageBar');
+            const progressText = document.getElementById('audioToImageText');
+            
+            try {
+                // Show progress bar
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+                progressText.textContent = 'Processing microphone data...';
+
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const audioBuffer = audioContext.createBuffer(1, micBufferForImage.length, audioContext.sampleRate);
+                audioBuffer.getChannelData(0).set(micBufferForImage);
+                
+                progressBar.style.width = '50%';
+                progressText.textContent = 'Decoding audio...';
+
+                const toneDurationMs = parseInt(document.getElementById('audioImageToneDuration').value);
+                const imageUrl = await decodeAudioToImage(audioBuffer, toneDurationMs, progressBar, progressText);
+                
+                const decodedImage = document.getElementById('decodedImage');
+                decodedImage.src = imageUrl;
+                decodedImage.classList.remove('hidden');
+                
+                const downloadBtn = document.getElementById('downloadDecodedImage');
+                downloadBtn.classList.remove('hidden');
+                downloadBtn.onclick = () => {
+                    downloadFile(imageUrl, 'decoded_image.png');
+                };
+                
+                progressBar.style.width = '100%';
+                progressText.textContent = 'Complete!';
+                setTimeout(() => {
+                    progressContainer.style.display = 'none';
+                }, 1000);
+            } catch (error) {
+                console.error('Error processing mic data:', error);
+                showError(document.getElementById('audioImageError'), 'Error processing microphone data: ' + error.message);
+                progressContainer.style.display = 'none';
+            } finally {
+                stopMicrophone('image');
+                document.getElementById('startMicToImage').classList.remove('hidden');
+                document.getElementById('stopMicToImage').classList.add('hidden');
+                document.getElementById('micStatusImage').textContent = 'Microphone Inactive';
+                document.getElementById('micStatusImage').classList.remove('mic-active');
+                document.getElementById('micStatusImage').classList.add('mic-inactive');
+                document.getElementById('micDetectImage').classList.add('hidden');
+                micBufferForImage = [];
+            }
+        });
+
+        // ========== Improved Microphone Processing ==========
+        async function startMicrophone(mode) {
+            if (micStream) {
+                stopMicrophone();
+            }
+            
+            micStream = await navigator.mediaDevices.getUserMedia({ 
+                audio: {
+                    echoCancellation: false,
+                    noiseSuppression: false,
+                    autoGainControl: false
+                }
+            });
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            const source = audioContext.createMediaStreamSource(micStream);
+            const analyser = audioContext.createAnalyser();
+            analyser.fftSize = fftSize;
+            analyser.smoothingTimeConstant = smoothingEnabled ? 0.8 : 0;
+            source.connect(analyser);
+            
+            // Initialize frequency visualizer if enabled
+            if (showVisualizer) {
+                initFrequencyVisualizer();
+                updateVisualizer(analyser);
+            }
+            
+            micProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+            
+            if (mode === 'text') {
+                micActiveForText = true;
+                micProcessor.onaudioprocess = (e) => {
+                    const inputBuffer = e.inputBuffer;
+                    const channelData = inputBuffer.getChannelData(0);
+                    
+                    // Calculate volume level
+                    const rms = calculateRMS(channelData);
+                    
+                    // Only process if volume is above threshold
+                    if (rms > micVolumeThreshold) {
+                        const freq = getDominantFrequency(channelData, audioContext.sampleRate);
+                        updateMicDetectionUI('text', freq);
+                        
+                        // Find closest character frequency
+                        let closestChar = findClosestCharacter(freq);
+                        
+                        // Debounce - don't add same character too quickly
+                        const now = Date.now();
+                        if (closestChar && (closestChar !== lastDetectedChar || now - lastCharTime > charDebounceTime)) {
+                            document.getElementById('textOutput').value += closestChar;
+                            lastDetectedChar = closestChar;
+                            lastCharTime = now;
+                        }
+                    }
+                };
+            } else if (mode === 'color') {
+                micActiveForColor = true;
+                let colorComponents = [];
+                let lastComponentTime = 0;
+                
+                micProcessor.onaudioprocess = (e) => {
+                    const inputBuffer = e.inputBuffer;
+                    const channelData = inputBuffer.getChannelData(0);
+                    
+                    // Calculate volume level
+                    const rms = calculateRMS(channelData);
+                    
+                    // Only process if volume is above threshold
+                    if (rms > micVolumeThreshold) {
+                        const freq = getDominantFrequency(channelData, audioContext.sampleRate);
+                        updateMicDetectionUI('color', freq);
+                        
+                        // Convert frequency to color component (0-255)
+                        let componentValue;
+                        
+                        // Apply secret key reverse transformation if enabled
+                        if (useSecretKey && secretKey > 0) {
+                            componentValue = Math.round(((freq - secretKey - 200) / 4800) * 255);
+                        } else {
+                            componentValue = Math.round(((freq - 200) / 4800) * 255);
+                        }
+                        
+                        componentValue = Math.max(0, Math.min(255, componentValue));
+                        
+                        // Debounce - don't add same component too quickly
+                        const now = Date.now();
+                        if (now - lastComponentTime > 300) {
+                            colorComponents.push(componentValue);
+                            lastComponentTime = now;
+                            
+                            // When we have 3 components, update the color
+                            if (colorComponents.length >= 3) {
+                                const color = `rgb(${colorComponents[0]}, ${colorComponents[1]}, ${colorComponents[2]})`;
+                                document.getElementById('decodedColorDisplay').style.backgroundColor = color;
+                                document.getElementById('decodedColorDisplay').textContent = color;
+                                colorComponents = [];
+                            }
+                        }
+                    }
+                };
+            } else if (mode === 'image') {
+                micActiveForImage = true;
+                micProcessor.onaudioprocess = (e) => {
+                    const inputBuffer = e.inputBuffer;
+                    const channelData = inputBuffer.getChannelData(0);
+                    
+                    // Calculate volume level
+                    const rms = calculateRMS(channelData);
+                    
+                    // Only process if volume is above threshold
+                    if (rms > micVolumeThreshold) {
+                        const freq = getDominantFrequency(channelData, audioContext.sampleRate);
+                        updateMicDetectionUI('image', freq);
+                        
+                        micBufferForImage = micBufferForImage.concat(Array.from(channelData));
+                    }
+                };
+            }
+            
+            source.connect(micProcessor);
+            micProcessor.connect(audioContext.destination);
+            
+            // Start silence detection timer
+            lastDetectedFrequencyTime = Date.now();
+            micSilenceTimer = setInterval(() => {
+                if (Date.now() - lastDetectedFrequencyTime > micSilenceTimeout) {
+                    // Auto-stop if no frequencies detected for timeout period
+                    if (micActiveForText) {
+                        document.getElementById('stopMicToText').click();
+                    } else if (micActiveForColor) {
+                        document.getElementById('stopMicToColor').click();
+                    } else if (micActiveForImage) {
+                        document.getElementById('stopMicToImage').click();
+                    }
+                }
+            }, 1000);
+        }
+
+        function calculateRMS(samples) {
+            let sum = 0;
+            for (let i = 0; i < samples.length; i++) {
+                sum += samples[i] * samples[i];
+            }
+            return Math.sqrt(sum / samples.length);
+        }
+
+        function findClosestCharacter(freq) {
+            if (!freq || freq < 50) return null; // Ignore very low frequencies
+            
+            let closestChar = null;
+            let minDiff = Infinity;
+            
+            for (const freqKey in freqCharMap) {
+                const freqNum = parseInt(freqKey);
+                const diff = Math.abs(freqNum - freq);
+                if (diff < minDiff && diff <= freqTolerance) {
+                    minDiff = diff;
+                    closestChar = freqCharMap[freqKey];
+                }
+            }
+            
+            return closestChar;
+        }
+
+        function updateMicDetectionUI(mode, frequency) {
+            if (frequency > 0) {
+                lastDetectedFrequencyTime = Date.now();
+                const detectElement = mode === 'text' ? 
+                    document.getElementById('micDetectText') : 
+                    (mode === 'color' ? document.getElementById('micDetectColor') : document.getElementById('micDetectImage'));
+                
+                detectElement.textContent = `Detecting: ${Math.round(frequency)}Hz`;
+                detectElement.classList.remove('hidden');
+                detectElement.classList.add('mic-detecting');
+            }
+        }
+
+        function stopMicrophone(mode) {
+            stopVisualizer();
+            
+            if (micSilenceTimer) {
+                clearInterval(micSilenceTimer);
+                micSilenceTimer = null;
+            }
+            
+            if (mode === 'text') {
+                micActiveForText = false;
+            } else if (mode === 'color') {
+                micActiveForColor = false;
+            } else if (mode === 'image') {
+                micActiveForImage = false;
+            } else {
+                micActiveForText = false;
+                micActiveForColor = false;
+                micActiveForImage = false;
+            }
+            
+            if (micProcessor) {
+                micProcessor.disconnect();
+                micProcessor = null;
+            }
+            
+            if (micStream) {
+                micStream.getTracks().forEach(track => track.stop());
+                micStream = null;
+            }
+            
+            if (audioContext && audioContext.state !== 'closed') {
+                audioContext.close();
+                audioContext = null;
+            }
+        }
+
+        // ========== Audio Processing Functions ==========
+        async function decodeAudioBuffer(audioBuffer, progressBar, progressText) {
+            const audioData = audioBuffer.getChannelData(0);
+            const sampleRate = audioBuffer.sampleRate;
+            const toneDuration = 0.3;
+            const chunkSize = Math.floor(sampleRate * toneDuration);
+            const nChunks = Math.floor(audioData.length / chunkSize);
+            let decodedText = '';
+            
+            for (let i = 0; i < nChunks; i++) {
+                const start = i * chunkSize;
+                const end = start + chunkSize;
+                const chunk = audioData.slice(start, end);
+                
+                const freq = getDominantFrequency(chunk, sampleRate);
+                const closestChar = findClosestCharacter(freq);
+                
+                if (closestChar) {
+                    decodedText += closestChar;
+                }
+                
+                // Update progress if progress elements were provided
+                if (progressBar && progressText && i % 100 === 0) {
+                    const progress = Math.floor((i / nChunks) * 100);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Decoding: ${progress}%`;
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+            
+            return decodedText;
+        }
+
+        async function decodeAudioToImage(audioBuffer, toneDurationMs, progressBar, progressText) {
+            const audioData = audioBuffer.getChannelData(0);
+            const sampleRate = audioBuffer.sampleRate;
+            const toneDuration = toneDurationMs / 1000;
+            const chunkSize = Math.floor(sampleRate * toneDuration);
+            const nChunks = Math.floor(audioData.length / chunkSize);
+            const byteArray = [];
+            
+            for (let i = 0; i < nChunks; i++) {
+                const start = i * chunkSize;
+                const end = start + chunkSize;
+                const chunk = audioData.slice(start, end);
+                
+                const freq = getDominantFrequency(chunk, sampleRate);
+                let byte = Math.round((freq - 200) / 20);
+                // Apply secret key reverse transformation if enabled
+                if (useSecretKey && secretKey > 0) {
+                    byte = (byte - secretKey + 256) % 256;
+                }
+                byteArray.push(Math.max(0, Math.min(255, byte)));
+                
+                // Update progress if progress elements were provided
+                if (progressBar && progressText && i % 100 === 0) {
+                    const progress = Math.floor((i / nChunks) * 100);
+                    progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `Processing: ${progress}%`;
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+            }
+            
+            // Convert bytes to image
+            const byteData = new Uint8Array(byteArray);
+            const blob = new Blob([byteData], { type: 'image/png' });
+            const imageUrl = URL.createObjectURL(blob);
+            
+            return imageUrl;
+        }
+
+        function getDominantFrequency(samples, sampleRate) {
+            // Apply Hanning window
+            const windowedSamples = samples.map((sample, i) => {
+                return sample * (0.5 - 0.5 * Math.cos(2 * Math.PI * i / (samples.length - 1)));
+            });
+            
+            // Zero padding to increase frequency resolution
+            const fftSize = Math.pow(2, Math.ceil(Math.log2(windowedSamples.length)) + 2);
+            const real = new Array(fftSize).fill(0);
+            const imag = new Array(fftSize).fill(0);
+            
+            for (let i = 0; i < windowedSamples.length; i++) {
+                real[i] = windowedSamples[i];
+            }
+            
+            fft(real, imag);
+            
+            // Find dominant frequency with sufficient amplitude
+            let maxMagnitude = 0;
+            let dominantFreq = 0;
+            
+            for (let i = 2; i < fftSize / 2; i++) {
+                const magnitude = Math.sqrt(real[i] * real[i] + imag[i] * imag[i]);
+                const currentFreq = i * sampleRate / fftSize;
+                
+                // Only consider frequencies in our expected range
+                if (magnitude > maxMagnitude && currentFreq > 50 && currentFreq < 6000) {
+                    maxMagnitude = magnitude;
+                    dominantFreq = currentFreq;
+                }
+            }
+            
+            return dominantFreq;
+        }
+
+        function fft(real, imag) {
+            const n = real.length;
+            if (n <= 1) return;
+            
+            // Split into even and odd
+            const evenReal = new Array(n/2);
+            const evenImag = new Array(n/2);
+            const oddReal = new Array(n/2);
+            const oddImag = new Array(n/2);
+            
+            for (let i = 0; i < n/2; i++) {
+                evenReal[i] = real[2*i];
+                evenImag[i] = imag[2*i];
+                oddReal[i] = real[2*i+1];
+                oddImag[i] = imag[2*i+1];
+            }
+            
+            // Recursive FFT
+            fft(evenReal, evenImag);
+            fft(oddReal, oddImag);
+            
+            // Combine results
+            for (let k = 0; k < n/2; k++) {
+                const angle = -2 * Math.PI * k / n;
+                const tReal = Math.cos(angle) * oddReal[k] - Math.sin(angle) * oddImag[k];
+                const tImag = Math.sin(angle) * oddReal[k] + Math.cos(angle) * oddImag[k];
+                
+                real[k] = evenReal[k] + tReal;
+                imag[k] = evenImag[k] + tImag;
+                real[k + n/2] = evenReal[k] - tReal;
+                imag[k + n/2] = evenImag[k] - tImag;
+            }
+        }
+
+        // ========== Utility Functions ==========
+        async function exportBufferToWav(buffer, sampleRate) {
+            const numChannels = 1;
+            const bytesPerSample = 2;
+            const blockAlign = numChannels * bytesPerSample;
+            const data = buffer.getChannelData(0);
+            const dataLength = data.length * bytesPerSample;
+            const bufferSize = 44 + dataLength;
+            const wavBuffer = new ArrayBuffer(bufferSize);
+            const view = new DataView(wavBuffer);
+
+            writeString(view, 0, 'RIFF');
+            view.setUint32(4, 36 + dataLength, true);
+            writeString(view, 8, 'WAVE');
+            writeString(view, 12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numChannels, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * blockAlign, true);
+            view.setUint16(32, blockAlign, true);
+            view.setUint16(34, bytesPerSample * 8, true);
+            writeString(view, 36, 'data');
+            view.setUint32(40, dataLength, true);
+
+            const offset = 44;
+            for (let i = 0; i < data.length; i++) {
+                const sample = Math.max(-1, Math.min(1, data[i]));
+                view.setInt16(offset + i * 2, sample * 32767, true);
+            }
+
+            return wavBuffer;
+        }
+
+        function writeString(view, offset, string) {
+            for (let i = 0; i < string.length; i++) {
+                view.setUint8(offset + i, string.charCodeAt(i));
+            }
+        }
+
+        function showError(element, message) {
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+
+        function downloadFile(url, filename) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+        }
+
+        function loadImage(url) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = url;
+            });
+        }
+
+        async function getImageBytes(img) {
+            // Create canvas for image processing
+            const canvas = document.createElement('canvas');
+            canvas.width = imageWidth;
+            canvas.height = imageHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, imageWidth, imageHeight);
+            
+            // Convert image to PNG and get bytes
+            return new Promise((resolve) => {
+                canvas.toBlob((blob) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const arrayBuffer = reader.result;
+                        const bytes = new Uint8Array(arrayBuffer);
+                        resolve(bytes);
+                    };
+                    reader.readAsArrayBuffer(blob);
+                }, 'image/png');
+            });
+        }
+
+        // Initialize character and color maps
+        initializeCharacterMaps();
+        initializeColorMaps();
+        // Initialize color picker
+        document.getElementById('colorDisplay').style.backgroundColor = currentColor;
+        document.getElementById('colorDisplay').textContent = currentColor;
+        // Initialize frequency visualizer
+        initFrequencyVisualizer();
+    </script>
+</body>
+</html>
